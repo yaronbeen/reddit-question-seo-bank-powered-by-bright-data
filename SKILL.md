@@ -82,12 +82,14 @@ Add coverage entries:
 
 ```json
 {
-  "cluster_key": "how do i migrate without losing rankings",
+  "question": "How do I migrate without losing rankings?",
   "evidence_type": "page_passage",
   "assessment": "gap_observed",
   "passages": [{"text": "short relevant passage", "source_url": "https://example.com/guide", "captured_at": "2026-11-09T12:10:00Z"}]
 }
 ```
+
+Use the original question text in `question`; the helper resolves it to any member of a cluster, so no generated key needs to be copied by hand. `thread_id` also works. Zero or multiple matches produce an explicit warning and remain `not_assessed`.
 
 Allowed assessments: `gap_observed` and `covered`. Use `gap_observed` only when the question and the missing passage are explicit. Otherwise omit the entry and the helper returns `not_assessed`. `evidence_type: snippet_only` always becomes `not_assessed`.
 
@@ -110,7 +112,7 @@ python3 "$SKILL_DIR/scripts/report.py" input.json \
 
 ### 5. Write only supported briefs
 
-Create up to five briefs for `gap_observed` clusters. Each includes audience, exact question, missing sub-answer, original outline, acceptance checks, Reddit thread citations, result-page citations, and sample caveats. Do not copy Reddit answers.
+Create up to four briefs for `gap_observed` clusters. Each includes audience, exact question, missing sub-answer, original outline, acceptance checks, Reddit thread citations, result-page citations, and sample caveats. Do not copy Reddit answers.
 
 ## Failure handling
 

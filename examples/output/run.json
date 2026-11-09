@@ -2,8 +2,14 @@
   "rows": [
     {
       "cluster_key": "how can i migrate safely",
-      "coverage": "not_assessed",
-      "coverage_evidence": [],
+      "coverage": "gap_observed",
+      "coverage_evidence": [
+        {
+          "captured_at": "2026-11-09T12:10:00Z",
+          "source_url": "https://example.com/synthetic-migration-guide",
+          "text": "The guide covers redirects but does not explain a rollback decision after launch."
+        }
+      ],
       "evidence": [
         {
           "captured_at": "2026-11-08T12:00:00Z",
@@ -56,6 +62,7 @@
       ]
     }
   ],
-  "run_id": "a2c6e8a543f0",
-  "schema_version": 1
+  "run_id": "111836fe94dd",
+  "schema_version": 1,
+  "warnings": []
 }

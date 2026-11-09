@@ -16,20 +16,21 @@ Use it to:
 
 ## Why Bright Data
 
-Reddit page challenges are a dead end for a simple research workflow. [Bright Data](https://brightdata.com/) MCP provides a maintained Reddit posts scraper for structured discovery, plus search and public-page fetching for the follow-up evidence check. One MCP connection takes you from seed keyword to question rows to cited content decision. No custom Reddit parser. No snippet-only SEO verdicts.
+Direct Reddit page retrieval can be unreliable for a simple research workflow. [Bright Data](https://brightdata.com/) MCP provides a maintained Reddit posts scraper for structured discovery, plus search and public-page fetching for the follow-up evidence check. One MCP connection takes you from seed keyword to question rows to cited content decision. No custom Reddit parser. No snippet-only SEO verdicts.
 
 ## Start with 5,000 free credits
 
 **New Bright Data accounts include 5,000 free credits per month. No credit card is required.** Credits share one account-level pool, reset monthly, and are subject to current eligibility and product terms.
 
-A small default plan uses **20 Reddit records, 4 searches, and 4 result-page fetches**. Dataset records and page requests are planned separately. Your agent shows the exact caps and asks you to confirm current tool pricing before collection. No unlimited-scraping promise.
+A small default plan uses **20 Reddit records, 4 searches, and 4 result-page fetches**. Dataset records and page requests are planned separately. Bright Data's documented free tier explicitly covers search and public-page fetching; coverage and pricing for structured scraper records must be confirmed in your account before `run_scraper`. The 5,000-credit offer is not a promise that every scraper record is free. Your agent shows the exact caps and asks for that confirmation before collection.
 
 ## What you get
 
 - `report.md`: ranked question clusters, subreddit spread, and coverage status.
 - `questions.csv`: stable cluster keys, exact wording, thread evidence, and change status.
-- `run.json`: the prior-run snapshot and carried source set for repeat research.
-- Up to five original briefs only when collected page passages support a `gap_observed` hypothesis.
+- `run.json`: the current snapshot for repeat research; vanished threads are not labeled as removed.
+- Up to four original briefs only when collected page passages support a `gap_observed` hypothesis.
+- Explicit warnings when coverage input matches zero or multiple clusters.
 
 ## Give this to your agent
 
@@ -79,10 +80,10 @@ The example is synthetic. The [live-check note](docs/live-check.md) records both
 
 ## Example output
 
-| Question cluster | Threads | Subreddits | Coverage | Next move |
+| Question cluster | Threads | Subreddits | Coverage | Status |
 |---|---:|---:|---|---|
-| how do i migrate safely | 6 | 2 | gap_observed | Brief with redirect and rollback checks |
-| which cms is best for a small site | 2 | 1 | not_assessed | Collect page evidence |
+| how can i migrate safely | 2 | 2 | gap_observed | new |
+| which cms is best for a small site | 1 | 1 | not_assessed | new |
 
 `gap_observed` means the collected passages leave a documented question unanswered. It does **not** mean low keyword difficulty, high traffic, or guaranteed rankings.
 
@@ -100,7 +101,7 @@ Tests cover question detection, Unicode normalization, deterministic clustering,
 
 - Not all Reddit questions. Keyword selection and Reddit’s own results shape the sample.
 - Not a search-volume or ranking-difficulty tool.
-- Not a license to copy answers or target Reddit users.
+- Not a license to copy answers or target Reddit users. Review Reddit's current terms and Bright Data's scraper terms before collection.
 - Not an auto-publisher. A human approves every brief and every word that ships.
 
 ## Repo map
@@ -115,7 +116,7 @@ docs/                    Setup, schema, testing, and live-check notes
 
 ## FAQ
 
-**Why use the Reddit dataset instead of thread pages?**  A direct public-page check returned a humanity challenge. The maintained MCP scraper returns structured post records without making the agent parse challenge pages.
+**Why use the Reddit dataset instead of thread pages?**  The documented smoke check found that direct page retrieval did not yield thread content, while the maintained MCP scraper returned structured post records. That is a retrieval observation, not permission to ignore Reddit's terms or a guarantee of future access.
 
 **What is the CSV key?**  `cluster_key`. On repeat runs, the helper matches similar prior clusters and carries the old key forward where possible. Thread IDs remain in the evidence JSON.
 

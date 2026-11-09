@@ -67,21 +67,46 @@ def comparison_value(value):
     return value
 
 
+def resolve_coverage(rows, checks):
+    matches = {row["cluster_key"]: [] for row in rows}
+    warnings = []
+    for check in checks:
+        label = check.get("cluster_key") or check.get("question") or check.get("thread_id") or "unlabeled coverage"
+        normalized_label = normalize_question(str(label))
+        targets = []
+        for row in rows:
+            question_match = normalized_label in {row["cluster_key"], *row["questions"]}
+            thread_match = check.get("thread_id") and check["thread_id"] in {e["thread_id"] for e in row["evidence"]}
+            if question_match or thread_match:
+                targets.append(row["cluster_key"])
+        if len(targets) != 1:
+            warnings.append(f"Coverage '{label}' matched {len(targets)} clusters; left not_assessed.")
+        else:
+            matches[targets[0]].append(check)
+    for key, entries in matches.items():
+        if len(entries) > 1:
+            warnings.append(f"Coverage for '{key}' has multiple entries; left not_assessed.")
+    return matches, warnings
+
+
 def render(result):
     lines = ["# Reddit Question SEO Bank | Powered by Bright Data", "", "Counts describe the captured, keyword-selected Reddit sample. Search coverage is an editorial hypothesis, not search volume or keyword difficulty.", "", "| Question cluster | Threads | Subreddits | Coverage | Status |", "|---|---:|---:|---|---|"]
     for row in result["rows"]:
         lines.append(f"| {row['cluster_key']} | {row['sample_count']} | {row['subreddit_spread']} | {row['coverage']} | {row['status']} |")
     lines += ["", f"Supported brief count: {result['brief_count']}. Snippets alone never create a brief. Write original answers; do not copy Reddit answers or usernames."]
+    if result["warnings"]:
+        lines += ["", "## Coverage warnings", ""] + [f"- {warning}" for warning in result["warnings"]]
     return "\n".join(lines) + "\n"
 
 
 def analyze(payload, previous=None):
     rows = cluster_questions(payload.get("rows", []), previous)
-    coverage = {r.get("cluster_key"): r for r in payload.get("coverage", [])}
+    coverage, warnings = resolve_coverage(rows, payload.get("coverage", []))
     old = {r["cluster_key"]: comparison_value(r) for r in (previous or {}).get("rows", [])}
     brief_count = 0
     for row in rows:
-        check = coverage.get(row["cluster_key"], {})
+        entries = coverage.get(row["cluster_key"], [])
+        check = entries[0] if len(entries) == 1 else {}
         passages = check.get("passages") or []
         if check.get("evidence_type") == "page_passage" and passages and check.get("assessment") in {"gap_observed", "covered"}:
             row["coverage"] = check["assessment"]
@@ -92,7 +117,7 @@ def analyze(payload, previous=None):
         identity = row["cluster_key"]
         row["status"] = "new" if identity not in old else ("unchanged" if old[identity] == comparison_value(row) else "changed")
     run_id = hashlib.sha256(json.dumps(comparison_value(rows), sort_keys=True).encode()).hexdigest()[:12]
-    result = {"rows": rows, "brief_count": brief_count, "snapshot": {"schema_version": 1, "run_id": run_id, "rows": rows}}
+    result = {"rows": rows, "brief_count": brief_count, "warnings": warnings, "snapshot": {"schema_version": 1, "run_id": run_id, "rows": rows, "warnings": warnings}}
     result["report"] = render(result)
     return result
 

@@ -8,7 +8,7 @@
   ],
   "coverage": [
     {
-      "cluster_key": "how do i migrate safely",
+      "question": "How do I migrate safely?",
       "evidence_type": "page_passage",
       "assessment": "gap_observed",
       "passages": [
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "cluster_key": "which cms is best for a small site",
+      "question": "Which CMS is best for a small site?",
       "evidence_type": "snippet_only",
       "assessment": "gap_observed",
       "passages": []

@@ -17,6 +17,8 @@ Read the [current free-tier terms](https://docs.brightdata.com/general/account/b
 
 `brightdata_get_scraper_details`, `brightdata_run_scraper`, progress/results tools for the Reddit posts dataset, plus `brightdata_search_engine` and `brightdata_scrape_as_markdown` for non-Reddit coverage pages.
 
+If scraper tools are not visible, follow the quickstart to enable the MCP `scrapers` tool group. Do not assume it is enabled by default. Search and public-page fetching are explicitly covered by the documented free tier; structured scraper coverage and per-record pricing must be confirmed in the account before `run_scraper`.
+
 The helper does not call Bright Data or any other network service. The agent performs the bounded MCP collection, writes normalized JSON, then invokes the helper.
 
 ## 3. Input and output contract
@@ -50,7 +52,7 @@ JSON-valued CSV cells are JSON strings. Cells beginning with spreadsheet formula
 
 `run.json` contains `schema_version`, a deterministic `run_id`, and normalized rows. The run ID hashes content while excluding `status` and `captured_at`. The same evidence therefore produces the same ID even when only capture timestamps differ.
 
-Statuses are `new`, `changed`, and `unchanged`. A changed search or discovery sample can create new rows; that is not proof of a market trend.
+Statuses are `new`, `changed`, and `unchanged`. Only current rows are emitted; vanished threads are not labeled as removed. Coverage may reference `question`, `thread_id`, or an exact cluster key; zero or multiple matches create warnings and remain `not_assessed`. A changed discovery sample is not a market trend.
 
 ## 4. Security and source limits
 
