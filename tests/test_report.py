@@ -34,6 +34,18 @@ class RedditQuestionTests(unittest.TestCase):
         self.assertEqual(second["rows"][0]["cluster_key"], first["rows"][0]["cluster_key"])
         self.assertEqual(second["rows"][0]["status"], "changed")
 
+    def test_two_clusters_cannot_inherit_the_same_prior_key(self):
+        first = analyze({"rows": [{"thread_id": "old", "title": "How do I migrate safely wordpress site?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/old/x/", "captured_at": "2026-11-09"}], "coverage": []})
+        rows = [
+            {"thread_id": "a", "title": "How do I migrate safely wordpress?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/a/x/", "captured_at": "2026-11-10"},
+            {"thread_id": "b", "title": "How do I safely wordpress site?", "subreddit": "webdev", "source_url": "https://www.reddit.com/r/webdev/comments/b/x/", "captured_at": "2026-11-10"},
+        ]
+        second = analyze({"rows": rows, "coverage": []}, first["snapshot"])
+        keys = [row["cluster_key"] for row in second["rows"]]
+        self.assertEqual(len(keys), 2)
+        self.assertEqual(len(set(keys)), 2)
+        self.assertEqual(keys.count(first["rows"][0]["cluster_key"]), 1)
+
     def test_snippets_alone_cannot_support_a_brief(self):
         rows = [{"thread_id": "a", "title": "What is a good migration checklist?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/a/x/", "captured_at": "2026-11-09"}]
         result = analyze({"rows": rows, "coverage": [{"cluster_key": "what is a good migration checklist", "evidence_type": "snippet_only", "passages": []}]})
