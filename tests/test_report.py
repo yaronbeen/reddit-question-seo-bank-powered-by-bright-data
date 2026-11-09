@@ -92,6 +92,32 @@ class RedditQuestionTests(unittest.TestCase):
         self.assertNotIn("user_posted", str(clusters))
 
 
+    def test_supported_gap_generates_an_actionable_brief_file(self):
+        root = Path(__file__).parents[1]
+        payload = json.loads((root / "examples" / "input.json").read_text())
+        result = analyze(payload)
+        self.assertIn("rollback decision", result["briefs"])
+        self.assertIn("Questions the draft must answer", result["briefs"])
+        self.assertIn("Acceptance checks", result["briefs"])
+        self.assertIn("https://example.com/synthetic-migration-guide", result["briefs"])
+        no_gap = analyze(dict(payload, coverage=[]))
+        self.assertIn("No supported briefs", no_gap["briefs"])
+        with tempfile.TemporaryDirectory() as tmp:
+            write_outputs(result, tmp)
+            self.assertTrue((Path(tmp) / "briefs.md").is_file())
+
+    def test_bright_data_mcp_installation_is_documented(self):
+        root = Path(__file__).parents[1]
+        readme = (root / "README.md").read_text()
+        guide = (root / "docs" / "install-bright-data-mcp.md").read_text()
+        self.assertNotIn("private repo", readme.lower())
+        self.assertIn("docs/install-bright-data-mcp.md", readme)
+        self.assertIn("@brightdata/mcp", guide)
+        self.assertIn("https://mcp.brightdata.com/mcp?token=", guide)
+        self.assertIn("GROUPS", guide)
+        self.assertIn("scrapers", guide)
+        self.assertIn("{env:BRIGHT_DATA_API_TOKEN}", guide)
+
     def test_shipped_example_output_and_readme_table_are_current(self):
         root = Path(__file__).parents[1]
         result = analyze(json.loads((root / "examples" / "input.json").read_text()))
