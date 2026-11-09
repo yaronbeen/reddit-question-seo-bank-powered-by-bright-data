@@ -1,0 +1,61 @@
+{
+  "rows": [
+    {
+      "cluster_key": "how can i migrate safely",
+      "coverage": "not_assessed",
+      "coverage_evidence": [],
+      "evidence": [
+        {
+          "captured_at": "2026-11-08T12:00:00Z",
+          "source_url": "https://www.reddit.com/r/webdev/comments/synthetic-b/example/",
+          "subreddit": "webdev",
+          "thread_id": "synthetic-b",
+          "title": "How can I migrate safely?"
+        },
+        {
+          "captured_at": "2026-11-09T12:00:00Z",
+          "source_url": "https://www.reddit.com/r/SEO/comments/synthetic-a/example/",
+          "subreddit": "SEO",
+          "thread_id": "synthetic-a",
+          "title": "How do I migrate safely?"
+        }
+      ],
+      "questions": [
+        "how can i migrate safely",
+        "how do i migrate safely"
+      ],
+      "sample_count": 2,
+      "status": "new",
+      "subreddit_spread": 2,
+      "subreddits": [
+        "SEO",
+        "webdev"
+      ]
+    },
+    {
+      "cluster_key": "which cms is best for a small site",
+      "coverage": "not_assessed",
+      "coverage_evidence": [],
+      "evidence": [
+        {
+          "captured_at": "2026-11-07T12:00:00Z",
+          "source_url": "https://www.reddit.com/r/cms/comments/synthetic-c/example/",
+          "subreddit": "cms",
+          "thread_id": "synthetic-c",
+          "title": "Which CMS is best for a small site?"
+        }
+      ],
+      "questions": [
+        "which cms is best for a small site"
+      ],
+      "sample_count": 1,
+      "status": "new",
+      "subreddit_spread": 1,
+      "subreddits": [
+        "cms"
+      ]
+    }
+  ],
+  "run_id": "a2c6e8a543f0",
+  "schema_version": 1
+}

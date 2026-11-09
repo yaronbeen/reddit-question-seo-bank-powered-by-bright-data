@@ -1,0 +1,9 @@
+{
+  "capture_date": "2026-11-09",
+  "source": "Bright Data MCP Reddit Posts discover_by_keyword, five-record smoke run",
+  "sanitization": "Usernames, profile fields, post bodies, engagement, images, and community metadata removed. Two question titles retained.",
+  "rows": [
+    {"thread_id": "t3_1xrlke4", "title": "How do you recover SEO traffic after a HubSpot migration and website rebrand? A B2B SaaS case study", "subreddit": "TechSEO", "source_url": "https://www.reddit.com/r/TechSEO/comments/1xrlke4/how_do_you_recover_seo_traffic_after_a_hubspot/", "captured_at": "2026-11-09"},
+    {"thread_id": "t3_1xrmv3b", "title": "How do you merge an acquired website without losing SEO rankings? URL mapping, indexing, and redirect decisions", "subreddit": "SEO_Mentors", "source_url": "https://www.reddit.com/r/SEO_Mentors/comments/1xrmv3b/how_do_you_merge_an_acquired_website_without/", "captured_at": "2026-11-09"}
+  ]
+}

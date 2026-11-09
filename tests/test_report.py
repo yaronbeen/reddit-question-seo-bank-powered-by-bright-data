@@ -1,3 +1,4 @@
+import json
 import sys
 import tempfile
 import unittest
@@ -26,6 +27,13 @@ class RedditQuestionTests(unittest.TestCase):
         self.assertEqual(clusters[0]["subreddit_spread"], 2)
         self.assertNotIn("person1", str(clusters))
 
+    def test_prior_cluster_key_survives_reworded_question(self):
+        first = analyze({"rows": [{"thread_id": "a", "title": "How do I migrate safely?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/a/x/", "captured_at": "2026-11-09"}], "coverage": []})
+        second = analyze({"rows": [{"thread_id": "a", "title": "How do I migrate safely?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/a/x/", "captured_at": "2026-11-09"}, {"thread_id": "b", "title": "How can I migrate safely?", "subreddit": "webdev", "source_url": "https://www.reddit.com/r/webdev/comments/b/x/", "captured_at": "2026-11-10"}], "coverage": []}, first["snapshot"])
+        self.assertEqual(len(second["rows"]), 1)
+        self.assertEqual(second["rows"][0]["cluster_key"], first["rows"][0]["cluster_key"])
+        self.assertEqual(second["rows"][0]["status"], "changed")
+
     def test_snippets_alone_cannot_support_a_brief(self):
         rows = [{"thread_id": "a", "title": "What is a good migration checklist?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/a/x/", "captured_at": "2026-11-09"}]
         result = analyze({"rows": rows, "coverage": [{"cluster_key": "what is a good migration checklist", "evidence_type": "snippet_only", "passages": []}]})
@@ -45,6 +53,13 @@ class RedditQuestionTests(unittest.TestCase):
             write_outputs(second, tmp)
             self.assertTrue((Path(tmp) / "questions.csv").is_file())
             self.assertTrue((Path(tmp) / "report.md").is_file())
+
+    def test_sanitized_live_records_are_questions_without_identities(self):
+        fixture = json.loads((Path(__file__).parent / "fixtures" / "sanitized_live.json").read_text())
+        clusters = cluster_questions(fixture["rows"])
+        self.assertEqual(len(clusters), 2)
+        self.assertTrue(all(is_question(row["title"]) for row in fixture["rows"]))
+        self.assertNotIn("user_posted", str(clusters))
 
 
 if __name__ == "__main__":
