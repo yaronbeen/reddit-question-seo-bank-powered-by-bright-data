@@ -102,6 +102,12 @@ class RedditQuestionTests(unittest.TestCase):
         self.assertIn("https://example.com/synthetic-migration-guide", result["briefs"])
         no_gap = analyze(dict(payload, coverage=[]))
         self.assertIn("No supported briefs", no_gap["briefs"])
+        titles = ["How do I migrate safely?", "What is the best CMS?", "Why is my site slow?", "Which CRM should I choose?", "Where can I find backlinks?"]
+        rows = [{"thread_id": str(index), "title": title, "subreddit": "test", "source_url": f"https://www.reddit.com/r/test/comments/{index}/"} for index, title in enumerate(titles)]
+        coverage = [{"question": title, "evidence_type": "page_passage", "assessment": "gap_observed", "passages": [{"text": "A specific answer is missing.", "source_url": "https://example.com/guide"}]} for title in titles]
+        capped = analyze({"rows": rows, "coverage": coverage})
+        self.assertEqual(capped["brief_count"], 4)
+        self.assertEqual(capped["briefs"].count("\n## "), 4)
         with tempfile.TemporaryDirectory() as tmp:
             write_outputs(result, tmp)
             self.assertTrue((Path(tmp) / "briefs.md").is_file())

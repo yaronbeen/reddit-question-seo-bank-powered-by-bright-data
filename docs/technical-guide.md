@@ -2,16 +2,9 @@
 
 ## 1. Connect Bright Data MCP
 
-Create a Bright Data API token in your account. Keep it in your local secret store or environment. Never commit it, paste it into an example, or include it in a report.
+Follow [Install Bright Data MCP](install-bright-data-mcp.md) for the hosted URL, local `npx @brightdata/mcp` configuration, Claude/Cursor setup, OpenCode V2 setup, token handling, and connection checks.
 
-Follow the [official remote MCP quickstart](https://docs.brightdata.com/products/mcp-server/remote/quickstart). The hosted endpoints documented there are:
-
-- SSE: `https://mcp.brightdata.com/sse?token=YOUR_API_TOKEN`
-- Streamable HTTP: `https://mcp.brightdata.com/mcp?token=YOUR_API_TOKEN`
-
-Configure the MCP server under the name `brightdata` in Claude Code or OpenCode. Use the client's secret-safe configuration flow. If the tools are not visible to the agent, stop and fix the connection before collecting data.
-
-Read the [current free-tier terms](https://docs.brightdata.com/general/account/billing-and-pricing/free-tier) for eligibility, resets, included products, and usage accounting. The README's 5,000-credit offer is a starting allowance, not an unlimited-use claim.
+This skill requires the `scrapers` group under the server name `brightdata`, which includes base search/page tools and the structured scraper workflow. Keep the token out of examples, reports, Git history, and shared URLs. If tools are not visible, stop and fix the connection. Confirm per-record scraper pricing and free-tier eligibility before `run_scraper`; the 5,000-credit offer is not a blanket free-scraper promise.
 
 ## 2. Tools used here
 
@@ -47,6 +40,10 @@ Upsert key: `cluster_key`
 Columns: `cluster_key`, `sample_count`, `subreddit_spread`, `coverage`, `status`, `questions`, `evidence`.
 
 JSON-valued CSV cells are JSON strings. Cells beginning with spreadsheet formula characters are prefixed with an apostrophe.
+
+### Briefs
+
+`briefs.md` contains up to four original-research scaffolds for `gap_observed` rows, prioritized by captured thread count and subreddit spread. Optional top-level `audience` input is preserved in the brief header. Each brief includes question variants, coverage passages, thread citations, an outline, and acceptance checks. Snippets, missing passages, and unresolved coverage produce no brief.
 
 ### Snapshot
 

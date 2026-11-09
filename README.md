@@ -16,7 +16,7 @@ Use it to:
 
 ## Why Bright Data
 
-Direct Reddit page retrieval can be unreliable for a simple research workflow. [Bright Data](https://brightdata.com/) MCP provides a Reddit Posts scraper for structured discovery, plus search and public-page fetching for the follow-up evidence check. One MCP connection takes you from seed keyword to question rows to cited content decision. No custom Reddit parser. No snippet-only SEO verdicts.
+Direct Reddit page retrieval can be unreliable for a simple research workflow. [Bright Data](https://docs.brightdata.com/products/mcp-server/overview) MCP provides a Reddit Posts scraper for structured discovery, plus search and public-page fetching for the follow-up evidence check. One MCP connection takes you from seed keyword to question rows to cited content decision. No custom Reddit parser. No snippet-only SEO verdicts.
 
 ## Start with 5,000 free credits
 
@@ -29,8 +29,8 @@ A small default plan uses **20 Reddit records, 4 searches, and 4 result-page fet
 - `report.md`: ranked question clusters, subreddit spread, and coverage status.
 - `questions.csv`: stable cluster keys, exact wording, thread evidence, and change status.
 - `run.json`: the current snapshot for repeat research; vanished threads are not labeled as removed.
-- Up to four original briefs only when collected page passages support a `gap_observed` hypothesis.
-- Explicit warnings when coverage input matches zero or multiple clusters.
+- `briefs.md`: up to four original-research brief scaffolds with question variants, an outline, acceptance checks, and citations—only for page-supported `gap_observed` clusters.
+- Explicit warnings when coverage input matches zero or multiple clusters; unsupported clusters produce no brief.
 
 ## Give this to your agent
 
@@ -47,16 +47,23 @@ job finishes or fails. Exclude usernames and do not scrape Reddit thread HTML.
 Cluster question titles. For at most 4 clusters, use one search and one selected
 public result page per cluster. Snippets cannot support a gap verdict. Label the
 result gap_observed, covered, or not_assessed from collected passages only.
-Run scripts/report.py and return the question bank plus any supported briefs.
+Run scripts/report.py and return the question bank plus the generated briefs.md.
+Review every brief as a research scaffold; do not auto-publish it as an article.
 Do not copy Reddit answers, estimate search volume, post, comment, or contact users.
 ```
 
 ## Install
 
-Requires Python 3.10+, an agent with Bright Data MCP connected as `brightdata`, and access to this private repo.
+Requires Python 3.10+ and an MCP-compatible agent. This is a public repo.
+
+### 1. Connect Bright Data MCP
+
+Follow [Install Bright Data MCP](docs/install-bright-data-mcp.md). Choose hosted or local setup with the `scrapers` tool group, then verify the base tools and structured scraper tools are connected as `brightdata`.
+
+### 2. Clone the skill
 
 ```bash
-git clone git@github.com:yaronbeen/reddit-question-seo-bank-powered-by-bright-data.git \
+git clone https://github.com/yaronbeen/reddit-question-seo-bank-powered-by-bright-data.git \
   ~/.claude/skills/reddit-question-seo-bank
 ```
 
@@ -95,7 +102,7 @@ Test-first history starts with a red commit. The helper is deterministic and nev
 python3 -m unittest discover -s tests -v
 ```
 
-Tests cover question detection, Unicode normalization, deterministic clustering, subreddit spread, prior-cluster identity, snippet rejection, no-evidence/no-brief gates, CSV injection, and repeat-run diffs. See [the testing note](docs/testing.md).
+Tests cover question detection, Unicode normalization, deterministic clustering, subreddit spread, prior-cluster identity, snippet rejection, generated brief content, no-evidence/no-brief gates, MCP installation docs, CSV injection, and repeat-run diffs. See [the testing note](docs/testing.md).
 
 ## What this is not
 

@@ -18,7 +18,7 @@ Turn a bounded set of structured Reddit post records into deduplicated question 
 - Use Bright Data's Reddit Posts scraper through MCP for Reddit content. Do not fetch Reddit thread HTML or use snippets as thread evidence.
 - Keyword-selected records are a biased sample, not a measure of Reddit-wide demand.
 - Snippets never justify `gap_observed` or a brief.
-- If Bright Data MCP is unavailable, ask the user to connect it and stop.
+- If Bright Data MCP is unavailable, follow `docs/install-bright-data-mcp.md` or ask the user to connect it; stop until the base and `scrapers` tools are visible.
 
 ## Inputs
 
@@ -110,9 +110,9 @@ python3 "$SKILL_DIR/scripts/report.py" input.json \
 
 `cluster_key` is the CSV key. Similar prior clusters inherit their old key when possible. Thread IDs remain in evidence. Search-selected sample changes are not market trends.
 
-### 5. Write only supported briefs
+### 5. Review only supported briefs
 
-Create up to four briefs for `gap_observed` clusters. Each includes audience, exact question, missing sub-answer, original outline, acceptance checks, Reddit thread citations, result-page citations, and sample caveats. Do not copy Reddit answers.
+The helper writes `briefs.md` with up to four briefs for `gap_observed` clusters, prioritized by captured thread count and subreddit spread. Each includes audience, exact question variants, observed passages, an original outline, acceptance checks, Reddit thread citations, result-page citations, and sample caveats. Review and expand these as research scaffolds; do not copy Reddit answers or auto-publish the scaffold as an article. An empty-evidence run writes an explicit no-supported-briefs message.
 
 ## Failure handling
 
@@ -124,4 +124,4 @@ Create up to four briefs for `gap_observed` clusters. Each includes audience, ex
 
 ## Output limits
 
-No volume, keyword-difficulty, traffic, ranking, or virality claims. No user contact or publishing. Return paths to `report.md`, `questions.csv`, and `run.json`.
+No volume, keyword-difficulty, traffic, ranking, or virality claims. No user contact or publishing. Return paths to `report.md`, `questions.csv`, `briefs.md`, and `run.json`.

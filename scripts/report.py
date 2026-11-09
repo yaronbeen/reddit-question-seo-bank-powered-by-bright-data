@@ -98,6 +98,32 @@ def resolve_coverage(rows, checks):
     return matches, warnings
 
 
+def md(value):
+    return " ".join(str(value if value is not None else "").split()).replace("|", "\\|")
+
+
+def render_briefs(rows, audience=None):
+    lines = [
+        "# Evidence-gated SEO briefs | Powered by Bright Data", "",
+        "These are original-research scaffolds, not finished articles. The captured sample does not establish search volume or ranking difficulty.", "",
+        f"**Audience:** {md(audience or 'Unspecified — confirm the intended reader before drafting.')}", "",
+    ]
+    if not rows:
+        lines.append("No supported briefs. A question cluster needs page-passage evidence and a gap_observed assessment.")
+        return "\n".join(lines) + "\n"
+    for row in rows:
+        lines += [f"## {md(row['cluster_key'])}", "", f"Evidence scope: {row['sample_count']} captured threads across {row['subreddit_spread']} subreddits. Treat this as sample evidence, not demand.", "", "### Questions the draft must answer", ""]
+        lines += [f"- {md(question)}" for question in row["questions"]]
+        lines += ["", "### Observed passage and editorial gap to validate", ""]
+        for passage in row["coverage_evidence"]:
+            lines.append(f"- {md(passage.get('text'))} — {md(passage.get('source_url') or 'source not captured')}")
+        lines += ["", "### Thread evidence for audience language", ""]
+        for evidence in row["evidence"]:
+            lines.append(f"- {md(evidence.get('title'))} — {md(evidence.get('source_url') or 'source not captured')}")
+        lines += ["", "### Original outline", "", "1. Give a direct answer to the primary question.", "2. Resolve the decision or missing sub-answer shown by the collected passage.", "3. Add an original example, checklist, or experiment with primary-source support.", "4. Cover the remaining captured question variants where they help the reader.", "", "### Acceptance checks", "", "- [ ] Answer every relevant question variant without copying Reddit answers.", "- [ ] Independently verify factual claims and cite primary sources.", "- [ ] Preserve the evidence caveat; add no volume, difficulty, or ranking claims.", "- [ ] Have a human review the brief and final draft before publication.", ""]
+    return "\n".join(lines) + "\n"
+
+
 def render(result):
     lines = ["# Reddit Question SEO Bank | Powered by Bright Data", "", "Counts describe the captured, keyword-selected Reddit sample. Search coverage is an editorial hypothesis, not search volume or keyword difficulty.", "", "| Question cluster | Threads | Subreddits | Coverage | Status |", "|---|---:|---:|---|---|"]
     for row in result["rows"]:
@@ -112,7 +138,6 @@ def analyze(payload, previous=None):
     rows = cluster_questions(payload.get("rows", []), previous)
     coverage, warnings = resolve_coverage(rows, payload.get("coverage", []))
     old = {r["cluster_key"]: comparison_value(r) for r in (previous or {}).get("rows", [])}
-    brief_count = 0
     for row in rows:
         entries = coverage.get(row["cluster_key"], [])
         check = entries[0] if len(entries) == 1 else {}
@@ -122,12 +147,14 @@ def analyze(payload, previous=None):
         else:
             row["coverage"] = "not_assessed"
         row["coverage_evidence"] = passages
-        brief_count += row["coverage"] == "gap_observed"
         identity = row["cluster_key"]
         row["status"] = "new" if identity not in old else ("unchanged" if old[identity] == comparison_value(row) else "changed")
+    brief_rows = sorted((r for r in rows if r["coverage"] == "gap_observed"), key=lambda r: (-r["sample_count"], -r["subreddit_spread"], r["cluster_key"]))[:4]
+    brief_count = len(brief_rows)
     run_id = hashlib.sha256(json.dumps(comparison_value(rows), sort_keys=True).encode()).hexdigest()[:12]
     result = {"rows": rows, "brief_count": brief_count, "warnings": warnings, "snapshot": {"schema_version": 1, "run_id": run_id, "rows": rows, "warnings": warnings}}
     result["report"] = render(result)
+    result["briefs"] = render_briefs(brief_rows, payload.get("audience"))
     return result
 
 
@@ -136,9 +163,10 @@ def write_outputs(result, output_dir):
     out.mkdir(parents=True, exist_ok=True)
     (out / "report.md").write_text(result["report"])
     (out / "run.json").write_text(json.dumps(result["snapshot"], indent=2, sort_keys=True) + "\n")
+    (out / "briefs.md").write_text(result["briefs"])
     fields = ["cluster_key", "sample_count", "subreddit_spread", "coverage", "status", "questions", "evidence"]
     with (out / "questions.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
+        writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         for row in result["rows"]:
             writer.writerow({key: csv_cell(json.dumps(row[key]) if key in {"questions", "evidence"} else row.get(key)) for key in fields})
