@@ -16,7 +16,7 @@ Use it to:
 
 ## Why Bright Data
 
-Direct Reddit page retrieval can be unreliable for a simple research workflow. [Bright Data](https://brightdata.com/) MCP provides a maintained Reddit posts scraper for structured discovery, plus search and public-page fetching for the follow-up evidence check. One MCP connection takes you from seed keyword to question rows to cited content decision. No custom Reddit parser. No snippet-only SEO verdicts.
+Direct Reddit page retrieval can be unreliable for a simple research workflow. [Bright Data](https://brightdata.com/) MCP provides a Reddit Posts scraper for structured discovery, plus search and public-page fetching for the follow-up evidence check. One MCP connection takes you from seed keyword to question rows to cited content decision. No custom Reddit parser. No snippet-only SEO verdicts.
 
 ## Start with 5,000 free credits
 
@@ -116,7 +116,7 @@ docs/                    Setup, schema, testing, and live-check notes
 
 ## FAQ
 
-**Why use the Reddit dataset instead of thread pages?**  The documented smoke check found that direct page retrieval did not yield thread content, while the maintained MCP scraper returned structured post records. That is a retrieval observation, not permission to ignore Reddit's terms or a guarantee of future access.
+**Why use the Reddit dataset instead of thread pages?**  The documented smoke check found that direct page retrieval did not yield thread content, while Bright Data's MCP scraper returned structured post records. That is a retrieval observation, not permission to ignore Reddit's terms or a guarantee of future access.
 
 **What is the CSV key?**  `cluster_key`. On repeat runs, the helper matches similar prior clusters and carries the old key forward where possible. Thread IDs remain in the evidence JSON.
 
@@ -124,4 +124,4 @@ docs/                    Setup, schema, testing, and live-check notes
 
 ---
 
-Built by Yaron Been. MIT licensed. Powered by Bright Data, without implying endorsement.
+Independent project by Yaron Been. MIT licensed. Powered by Bright Data; no affiliation or endorsement is implied.

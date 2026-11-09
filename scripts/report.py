@@ -46,12 +46,21 @@ def cluster_questions(records, previous=None):
         else:
             target["questions"].append(question)
             target["evidence"].append(evidence)
-    old_keys = [r["cluster_key"] for r in (previous or {}).get("rows", [])]
+    old_keys = list(dict.fromkeys(r["cluster_key"] for r in (previous or {}).get("rows", [])))
+    candidates = []
+    for index, cluster in enumerate(clusters):
+        for old_key in old_keys:
+            score = max(similarity(old_key, q) for q in cluster["questions"])
+            if score >= 0.6:
+                candidates.append((-score, cluster["cluster_key"], old_key, index))
+    used_clusters, used_old_keys = set(), set()
+    for _, _, old_key, index in sorted(candidates):
+        if index in used_clusters or old_key in used_old_keys:
+            continue
+        clusters[index]["cluster_key"] = old_key
+        used_clusters.add(index)
+        used_old_keys.add(old_key)
     for cluster in clusters:
-        if old_keys:
-            best = max(old_keys, key=lambda key: max(similarity(key, q) for q in cluster["questions"]))
-            if max(similarity(best, q) for q in cluster["questions"]) >= 0.6:
-                cluster["cluster_key"] = best
         cluster["questions"] = sorted(set(cluster["questions"]))
         cluster["sample_count"] = len(cluster["evidence"])
         cluster["subreddit_spread"] = len({e["subreddit"] for e in cluster["evidence"]})

@@ -52,7 +52,7 @@ JSON-valued CSV cells are JSON strings. Cells beginning with spreadsheet formula
 
 `run.json` contains `schema_version`, a deterministic `run_id`, and normalized rows. The run ID hashes content while excluding `status` and `captured_at`. The same evidence therefore produces the same ID even when only capture timestamps differ.
 
-Statuses are `new`, `changed`, and `unchanged`. Only current rows are emitted; vanished threads are not labeled as removed. Coverage may reference `question`, `thread_id`, or an exact cluster key; zero or multiple matches create warnings and remain `not_assessed`. A changed discovery sample is not a market trend.
+Prior keys are inherited one-to-one, highest similarity first, so two current clusters cannot share a CSV upsert key. Statuses are `new`, `changed`, and `unchanged`. Only current rows are emitted; vanished threads are not labeled as removed. Coverage may reference `question`, `thread_id`, or an exact cluster key; zero or multiple matches create warnings and remain `not_assessed`. A changed discovery sample is not a market trend.
 
 ## 4. Security and source limits
 

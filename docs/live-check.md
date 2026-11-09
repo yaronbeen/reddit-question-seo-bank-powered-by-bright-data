@@ -8,7 +8,7 @@ Checked 2026-11-09 with Bright Data MCP.
 
 ## Structured MCP result
 
-The maintained Reddit Posts scraper was called through MCP with:
+Bright Data's Reddit Posts scraper was called through MCP with:
 
 - Dataset `gd_lvz8ah06191smkebj4`
 - Method `discover_by_keyword`
