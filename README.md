@@ -4,6 +4,19 @@
 
 Collect structured Reddit posts through Bright Data MCP, cluster the actual questions, and check a small set of search-result pages before commissioning content. The prize is not another keyword list. It is a cited queue of original FAQs and article briefs rooted in real wording.
 
+## In plain English
+
+**Find the questions people actually ask on Reddit and turn them into SEO FAQ and article briefs.**
+
+An AI-agent skill. You give a seed keyword. Your agent uses Bright Data MCP to pull Reddit posts, groups similar questions, and checks a few search results to see whether the question is already answered well.
+
+| | |
+|---|---|
+| **You give it** | A seed keyword or topic. |
+| **You get** | `questions.csv` (grouped questions in the audience’s own words, with thread links), `report.md`, and `briefs.md`: up to four article-brief scaffolds for questions that look under-answered. |
+| **Made for** | SEO and content people who want FAQs rooted in real wording. |
+| **Boundaries** | No invented search volume or keyword difficulty. |
+
 ## The decision
 
 **Which recurring question deserves an original answer, and what evidence is still missing?**
