@@ -54,12 +54,40 @@ class RedditQuestionTests(unittest.TestCase):
             self.assertTrue((Path(tmp) / "questions.csv").is_file())
             self.assertTrue((Path(tmp) / "report.md").is_file())
 
+    def test_coverage_can_reference_any_member_question(self):
+        rows = [
+            {"thread_id": "a", "title": "How do I migrate safely?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/a/x/", "captured_at": "2026-11-09"},
+            {"thread_id": "b", "title": "How can I migrate safely?", "subreddit": "webdev", "source_url": "https://www.reddit.com/r/webdev/comments/b/x/", "captured_at": "2026-11-09"},
+        ]
+        result = analyze({"rows": rows, "coverage": [{"question": "How do I migrate safely?", "evidence_type": "page_passage", "assessment": "gap_observed", "passages": [{"text": "Rollback is not explained.", "source_url": "https://example.com/guide", "captured_at": "2026-11-09"}]}]})
+        self.assertEqual(result["rows"][0]["coverage"], "gap_observed")
+        self.assertEqual(result["brief_count"], 1)
+        self.assertEqual(result["warnings"], [])
+
+    def test_unmatched_coverage_is_an_explicit_warning(self):
+        rows = [{"thread_id": "a", "title": "How do I migrate safely?", "subreddit": "seo", "source_url": "https://www.reddit.com/r/seo/comments/a/x/", "captured_at": "2026-11-09"}]
+        result = analyze({"rows": rows, "coverage": [{"cluster_key": "wrong key", "evidence_type": "page_passage", "assessment": "gap_observed", "passages": [{"text": "Evidence", "source_url": "https://example.com"}]}]})
+        self.assertEqual(result["rows"][0]["coverage"], "not_assessed")
+        self.assertEqual(result["brief_count"], 0)
+        self.assertEqual(len(result["warnings"]), 1)
+        self.assertIn("wrong key", result["warnings"][0])
+
     def test_sanitized_live_records_are_questions_without_identities(self):
         fixture = json.loads((Path(__file__).parent / "fixtures" / "sanitized_live.json").read_text())
         clusters = cluster_questions(fixture["rows"])
         self.assertEqual(len(clusters), 2)
         self.assertTrue(all(is_question(row["title"]) for row in fixture["rows"]))
         self.assertNotIn("user_posted", str(clusters))
+
+
+    def test_shipped_example_output_and_readme_table_are_current(self):
+        root = Path(__file__).parents[1]
+        result = analyze(json.loads((root / "examples" / "input.json").read_text()))
+        self.assertEqual(result["report"], (root / "examples" / "output" / "report.md").read_text())
+        readme = (root / "README.md").read_text()
+        for line in result["report"].splitlines():
+            if line.startswith("|"):
+                self.assertIn(line, readme)
 
 
 if __name__ == "__main__":
